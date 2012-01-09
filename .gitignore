@@ -19,6 +19,7 @@ _UpgradeReport_Files/
 bin/
 obj/
 TestResults/
+.svn/
 # Web publish log #
 ###################
 *.Publish.xml
