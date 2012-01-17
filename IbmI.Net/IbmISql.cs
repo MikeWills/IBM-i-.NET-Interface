@@ -27,7 +27,18 @@ namespace IbmI.Net
                 {
                     conn.Open();
                     if (parameters != null) { parameters(cmd.Parameters); }
-                    using (iDB2DataAdapter da = new iDB2DataAdapter(cmd)) { da.Fill(dt); }
+                    try
+                    {
+                        using (iDB2DataAdapter da = new iDB2DataAdapter(cmd)) { da.Fill(dt); }
+                    }
+                    catch (iDB2SQLErrorException e)
+                    {
+                        throw e;
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
                     conn.Close();
                 }
             }
@@ -62,7 +73,18 @@ namespace IbmI.Net
                 {
                     conn.Open();
                     if (parameters != null) { parameters(cmd.Parameters); }
-                    cmd.ExecuteNonQuery();
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (iDB2SQLErrorException e)
+                    {
+                        throw e;
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
                     conn.Close();
                 }
             }
@@ -95,7 +117,17 @@ namespace IbmI.Net
                     cmd.CommandType = CommandType.StoredProcedure;
                     conn.Open();
                     if (parameters != null) { parameters(cmd.Parameters); }
-                    cmd.ExecuteNonQuery();
+                    try {
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (iDB2SQLErrorException e)
+                    {
+                        throw e;
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
                     conn.Close();
                 }
             }
