@@ -8,6 +8,7 @@
 *.dll.config
 *.cache
 *.suo
+*.user
 # Include dlls if they’re in the NuGet packages directory
 !/packages/*/lib/*.dll
 # VS Upgrade stuff #
