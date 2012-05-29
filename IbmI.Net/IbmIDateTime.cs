@@ -12,10 +12,24 @@ namespace IbmI.Net
         /// <returns></returns>
         static public DateTime ConvertToDateTime(int numericDate)
         {
-            string strNumericDate = numericDate.ToString();
-            return new DateTime(Convert.ToInt32(strNumericDate.Substring(0, 4)),
-                                Convert.ToInt32(strNumericDate.Substring(4, 2)),
-                                Convert.ToInt32(strNumericDate.Substring(6, 2)));
+            try
+            {
+                if (numericDate != 0)
+                {
+                    string strNumericDate = numericDate.ToString();
+                    return new DateTime(Convert.ToInt32(strNumericDate.Substring(0, 4)),
+                                        Convert.ToInt32(strNumericDate.Substring(4, 2)),
+                                        Convert.ToInt32(strNumericDate.Substring(6, 2)));
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
 
         /// <summary>
@@ -25,10 +39,24 @@ namespace IbmI.Net
         /// <returns></returns>
         static public DateTime ConvertToDateTime(decimal numericDate)
         {
-            string strNumericDate = numericDate.ToString();
-            return new DateTime(Convert.ToInt32(strNumericDate.Substring(0, 4)),
-                                Convert.ToInt32(strNumericDate.Substring(4, 2)),
-                                Convert.ToInt32(strNumericDate.Substring(6, 2)));
+            try
+            {
+                if (numericDate != 0)
+                {
+                    string strNumericDate = numericDate.ToString();
+                    return new DateTime(Convert.ToInt32(strNumericDate.Substring(0, 4)),
+                                        Convert.ToInt32(strNumericDate.Substring(4, 2)),
+                                        Convert.ToInt32(strNumericDate.Substring(6, 2)));
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
 
         /// <summary>
@@ -99,7 +127,7 @@ namespace IbmI.Net
                     return new DateTime(Convert.ToInt32(strNumericDate.Substring(0, 4)),
                                         Convert.ToInt32(strNumericDate.Substring(4, 2)),
                                         Convert.ToInt32(strNumericDate.Substring(6, 2)),
-                                        0,0,0);
+                                        0, 0, 0);
                 }
             }
             else if (timeLength == 6)
