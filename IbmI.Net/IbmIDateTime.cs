@@ -70,6 +70,13 @@ namespace IbmI.Net
         {
             string strNumericDate = numericDate.ToString();
             string strNumericTime = String.Empty;
+
+            // Catch zero dates being passed
+            if (numericDate == 0 || numericTime == 0)
+            {
+                return DateTime.MinValue;
+            }
+
             if (timeLength == 4)
             {
                 strNumericTime = String.Format("{0:0000}", numericTime);
@@ -109,6 +116,13 @@ namespace IbmI.Net
         {
             string strNumericDate = numericDate.ToString();
             string strNumericTime = String.Empty;
+
+            // Catch zero dates being passed
+            if (numericDate == 0 || numericTime == 0)
+            {
+                return DateTime.MinValue;
+            }
+
             if (timeLength == 4)
             {
                 strNumericTime = String.Format("{0:0000}", numericTime);
