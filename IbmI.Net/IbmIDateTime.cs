@@ -72,7 +72,7 @@ namespace IbmI.Net
             string strNumericTime = String.Empty;
 
             // Catch zero dates being passed
-            if (numericDate == 0 || numericTime == 0)
+            if (numericDate == 0 && numericTime == 0)
             {
                 return DateTime.MinValue;
             }
@@ -118,7 +118,7 @@ namespace IbmI.Net
             string strNumericTime = String.Empty;
 
             // Catch zero dates being passed
-            if (numericDate == 0 || numericTime == 0)
+            if (numericDate == 0 && numericTime == 0)
             {
                 return DateTime.MinValue;
             }
