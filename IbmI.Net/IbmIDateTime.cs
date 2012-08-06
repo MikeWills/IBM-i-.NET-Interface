@@ -168,7 +168,11 @@ namespace IbmI.Net
         /// <returns></returns>
         static public int ConvertToNumericDate(DateTime dateTime)
         {
-            return Convert.ToInt32(String.Format("{0}{1}{2}", dateTime.Year, dateTime.Month, dateTime.Day));
+            if (dateTime.Date == new DateTime(1, 1, 1))
+            {
+                return 0;
+            }
+            return Convert.ToInt32(String.Format("{0}{1}{2}", dateTime.Year.ToString("0000"), dateTime.Month.ToString("00"), dateTime.Day.ToString("00")));
         }
 
         /// <summary>
@@ -181,11 +185,11 @@ namespace IbmI.Net
         {
             if (timeLength == 6)
             {
-                return Convert.ToInt32(String.Format("{0}{1}{2}", dateTime.Hour, dateTime.Minute, dateTime.Second));
+                return Convert.ToInt32(String.Format("{0}{1}{2}", dateTime.Hour.ToString("00"), dateTime.Minute.ToString("00"), dateTime.Second.ToString("00")));
             }
             else if (timeLength == 4)
             {
-                return Convert.ToInt32(String.Format("{0}{1}", dateTime.Hour, dateTime.Minute));
+                return Convert.ToInt32(String.Format("{0}{1}", dateTime.Hour.ToString("00"), dateTime.Minute.ToString("00")));
             }
             else
             {
