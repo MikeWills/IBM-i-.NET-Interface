@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Mike Wills</authors>
+    <owners>Mike Wills</owners>
+    <projectUrl>https://github.com/MikeWills/IBM-i-.NET-Interface</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A set of classes for working with IBM i data in C# .NET.</description>
+    <releaseNotes>New Release</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>ibmi iseries as400 interface</tags>
+  </metadata>
+</package>
