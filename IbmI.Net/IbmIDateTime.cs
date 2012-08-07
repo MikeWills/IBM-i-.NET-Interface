@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Diagnostics;
 
 namespace IbmI.Net
 {
@@ -172,7 +173,7 @@ namespace IbmI.Net
             {
                 return 0;
             }
-            return Convert.ToInt32(String.Format("{0}{1}{2}", dateTime.Year.ToString("0000"), dateTime.Month.ToString("00"), dateTime.Day.ToString("00")));
+            return dateTime.Year * 10000 + dateTime.Month * 100 + dateTime.Day;
         }
 
         /// <summary>
@@ -185,15 +186,15 @@ namespace IbmI.Net
         {
             if (timeLength == 6)
             {
-                return Convert.ToInt32(String.Format("{0}{1}{2}", dateTime.Hour.ToString("00"), dateTime.Minute.ToString("00"), dateTime.Second.ToString("00")));
+                return dateTime.Hour * 10000 + dateTime.Minute * 100 + dateTime.Second;
             }
             else if (timeLength == 4)
             {
-                return Convert.ToInt32(String.Format("{0}{1}", dateTime.Hour.ToString("00"), dateTime.Minute.ToString("00")));
+                return dateTime.Hour * 100 + dateTime.Minute;
             }
             else
             {
-                return -1;
+                return 0;
             }
         }
     }
