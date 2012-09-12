@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,9 @@ namespace IbmI.Net
 {
     public static class IbmISql
     {
+        private const string LOG_SOURCE = "IbmI.Net";
+        private const string LOG_APPLICATION = "Application";
+
         #region Get data
         /// <summary>
         /// Gets the data from the IBM i.
@@ -33,6 +37,18 @@ namespace IbmI.Net
                     }
                     catch (iDB2SQLErrorException e)
                     {
+                        if (!EventLog.SourceExists(LOG_SOURCE))
+                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+
+                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                        throw e;
+                    }
+                    catch (Exception e)
+                    {
+                        if (!EventLog.SourceExists(LOG_SOURCE))
+                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+
+                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                         throw e;
                     }
                     finally
@@ -79,6 +95,18 @@ namespace IbmI.Net
                     }
                     catch (iDB2SQLErrorException e)
                     {
+                        if (!EventLog.SourceExists(LOG_SOURCE))
+                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+
+                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
+                        throw e;
+                    }
+                    catch (Exception e)
+                    {
+                        if (!EventLog.SourceExists(LOG_SOURCE))
+                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+
+                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                         throw e;
                     }
                     finally
@@ -122,6 +150,18 @@ namespace IbmI.Net
                     }
                     catch (iDB2SQLErrorException e)
                     {
+                        if (!EventLog.SourceExists(LOG_SOURCE))
+                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+
+                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
+                        throw e;
+                    }
+                    catch (Exception e)
+                    {
+                        if (!EventLog.SourceExists(LOG_SOURCE))
+                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+
+                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                         throw e;
                     }
                     finally
