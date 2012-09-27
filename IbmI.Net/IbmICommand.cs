@@ -21,7 +21,7 @@ namespace IbmI.Net
             bool rc = true;
 
             // Construct a string which contains the call to QCMDEXC.
-            string pgmParm = String.Format("CALL QSYS/QCMDEXC('{0}', {1})", cmdText.Replace("'", "''").Trim(), cmdText.Trim().Length.ToString("0000000000.00000"));
+            string pgmParm = String.Format("CALL QSYS.QCMDEXC('{0}', {1})", cmdText.Replace("'", "''").Trim(), cmdText.Trim().Length.ToString("0000000000.00000"));
 
 #if DEBUG
             if (!EventLog.SourceExists(LOG_SOURCE))
