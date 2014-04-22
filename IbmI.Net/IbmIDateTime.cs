@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace IbmI.Net
 {
-    public class IbmIDateTime
+    public static class IbmIDateTime
     {
         /// <summary>
         /// Converts to a DateTime.
