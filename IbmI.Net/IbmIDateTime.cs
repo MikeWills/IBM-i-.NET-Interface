@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace IbmI.Net
 {
-    public static class IbmIDateTime
+    public class IbmIDateTime
     {
         /// <summary>
         /// Converts to a DateTime.
@@ -157,6 +157,62 @@ namespace IbmI.Net
                                     Convert.ToInt32(strNumericTime.Substring(4, 2)));
             }
             else
+            {
+                return DateTime.MinValue;
+            }
+        }
+
+        /// <summary>
+        /// Converts to date time from a 6 digit date.
+        /// </summary>
+        /// <param name="numericDate">The numeric date.</param>
+        /// <returns></returns>
+        static public DateTime ConvertToDateTimeMMDDYY(int numericDate)
+        {
+            try
+            {
+                if (numericDate != 0)
+                {
+                    string strNumericDate = numericDate.ToString();
+                    int fourDigitYear = System.Threading.Thread.CurrentThread.CurrentCulture.Calendar.ToFourDigitYear(Convert.ToInt32(strNumericDate.Substring(4, 2)));
+                    return new DateTime(fourDigitYear,
+                                        Convert.ToInt32(strNumericDate.Substring(0, 2)),
+                                        Convert.ToInt32(strNumericDate.Substring(2, 2)));
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
+        }
+
+        /// <summary>
+        /// Converts to date time6 digit.
+        /// </summary>
+        /// <param name="numericDate">The numeric date.</param>
+        /// <returns></returns>
+        static public DateTime ConvertToDateTimeMMDDYY(decimal numericDate)
+        {
+            try
+            {
+                if (numericDate != 0)
+                {
+                    string strNumericDate = numericDate.ToString();
+                    int fourDigitYear = System.Threading.Thread.CurrentThread.CurrentCulture.Calendar.ToFourDigitYear(Convert.ToInt32(strNumericDate.Substring(4, 2)));
+                    return new DateTime(fourDigitYear,
+                                        Convert.ToInt32(strNumericDate.Substring(0, 2)),
+                                        Convert.ToInt32(strNumericDate.Substring(2, 2)));
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
+            catch
             {
                 return DateTime.MinValue;
             }

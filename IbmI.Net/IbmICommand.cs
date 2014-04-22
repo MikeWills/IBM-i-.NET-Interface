@@ -5,9 +5,9 @@ using IBM.Data.DB2.iSeries;
 
 namespace IbmI.Net
 {
-    public static class IbmICommand
+    public class IbmICommand
     {
-        private const string LOG_SOURCE = "IbmI.Net";
+        private const string LOG_SOURCE = "IbmICommand";
         private const string LOG_APPLICATION = "Application";
 
         /// <summary>

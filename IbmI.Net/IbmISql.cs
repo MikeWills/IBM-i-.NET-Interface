@@ -8,10 +8,44 @@ using IBM.Data.DB2.iSeries;
 
 namespace IbmI.Net
 {
-    public static class IbmISql
+    public class IbmISql : IDisposable
     {
-        private const string LOG_SOURCE = "IbmI.Net";
-        private const string LOG_APPLICATION = "Application";
+        private const string _LOG_SOURCE = "IbmISql";
+        private const string _LOG_APPLICATION = "Application";
+        private string _CONN_STRING;
+        private iDB2Connection conn;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IbmISql"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        public IbmISql(string connectionString)
+        {
+            _CONN_STRING = connectionString;
+            conn = new iDB2Connection(_CONN_STRING);
+        }
+
+        /// <summary>
+        /// Opens the conn.
+        /// </summary>
+        public void OpenConn()
+        {
+            try
+            {
+                conn.Open();
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        /// <summary>
+        /// Closes the conn.
+        /// </summary>
+        public void CloseConn()
+        {
+            conn.Close();
+        }
 
         #region Get data
         /// <summary>
@@ -21,41 +55,32 @@ namespace IbmI.Net
         /// <param name="sqlStatement">The SQL statement</param>
         /// <param name="parameters">The parameters (iDB2Parameter)</param>
         /// <returns>DataTable</returns>
-        public static DataTable GetData(string connString, string sqlStatement, Action<iDB2ParameterCollection> parameters)
+        public DataTable GetData(string sqlStatement, Action<iDB2ParameterCollection> parameters)
         {
             DataTable dt = new DataTable();
 
-            using (iDB2Connection conn = new iDB2Connection(connString))
+            using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
             {
-                using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
+                if (parameters != null) { parameters(cmd.Parameters); }
+                try
                 {
-                    conn.Open();
-                    if (parameters != null) { parameters(cmd.Parameters); }
-                    try
-                    {
-                        using (iDB2DataAdapter da = new iDB2DataAdapter(cmd)) { da.Fill(dt); }
-                    }
-                    catch (iDB2SQLErrorException e)
-                    {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+                    using (iDB2DataAdapter da = new iDB2DataAdapter(cmd)) { da.Fill(dt); }
+                }
+                catch (iDB2SQLErrorException e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
 
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
-                        throw e;
-                    }
-                    catch (Exception e)
-                    {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
 
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
-                        throw e;
-                    }
-                    finally
-                    {
-                        conn.Close();
-                    }
-                    conn.Close();
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
                 }
             }
 
@@ -68,9 +93,61 @@ namespace IbmI.Net
         /// <param name="connString">The connection string</param>
         /// <param name="sqlStatement">The SQL statement</param>
         /// <returns>DataTable</returns>
-        public static DataTable GetData(string connString, string sqlStatement)
+        public DataTable GetData(string sqlStatement)
         {
-            return GetData(connString, sqlStatement, null);
+            return GetData(sqlStatement, null);
+        }
+        #endregion
+
+        #region Get value
+        /// <summary>
+        /// Gets the data from the IBM i.
+        /// </summary>
+        /// <param name="connString">The connection string</param>
+        /// <param name="sqlStatement">The SQL statement</param>
+        /// <param name="parameters">The parameters (iDB2Parameter)</param>
+        /// <returns>DataTable</returns>
+        public Object GetValue(string sqlStatement, Action<iDB2ParameterCollection> parameters)
+        {
+            Object obj;
+
+            using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
+            {
+                if (parameters != null) { parameters(cmd.Parameters); }
+                try
+                {
+                    obj = cmd.ExecuteScalar();
+                }
+                catch (iDB2SQLErrorException e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
+
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
+
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+            }
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Gets the data from the IBM i.
+        /// </summary>
+        /// <param name="connString">The connection string</param>
+        /// <param name="sqlStatement">The SQL statement</param>
+        /// <returns>DataTable</returns>
+        public Object GetValue(string sqlStatement)
+        {
+            return GetValue(sqlStatement, null);
         }
         #endregion
 
@@ -81,39 +158,30 @@ namespace IbmI.Net
         /// <param name="connString">The connection string</param>
         /// <param name="sqlStatement">The SQL statement</param>
         /// <param name="parameters">The parameters (iDB2Parameter)</param>
-        public static void ExecuteNonQuery(string connString, string sqlStatement, Action<iDB2ParameterCollection> parameters)
+        public void ExecuteNonQuery(string sqlStatement, Action<iDB2ParameterCollection> parameters)
         {
-            using (iDB2Connection conn = new iDB2Connection(connString))
+            using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
             {
-                using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
+                if (parameters != null) { parameters(cmd.Parameters); }
+                try
                 {
-                    conn.Open();
-                    if (parameters != null) { parameters(cmd.Parameters); }
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (iDB2SQLErrorException e)
-                    {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (iDB2SQLErrorException e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
 
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
-                        throw e;
-                    }
-                    catch (Exception e)
-                    {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
 
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
-                        throw e;
-                    }
-                    finally
-                    {
-                        conn.Close();
-                    }
-                    conn.Close();
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
                 }
             }
         }
@@ -123,9 +191,9 @@ namespace IbmI.Net
         /// </summary>
         /// <param name="connString">The connection string</param>
         /// <param name="sqlStatement">The SQL statement</param>
-        public static void ExecuteNonQuery(string connString, string sqlStatement)
+        public void ExecuteNonQuery(string sqlStatement)
         {
-            ExecuteNonQuery(connString, sqlStatement, null);
+            ExecuteNonQuery(sqlStatement, null);
         }
         #endregion
 
@@ -136,39 +204,31 @@ namespace IbmI.Net
         /// <param name="connString">The connection string</param>
         /// <param name="sqlStatement">The SQL statement</param>
         /// <param name="parameters">The parameters (iDB2Parameter)</param>
-        public static void ExecuteStoredProcedure(string connString, string sqlStatement, Action<iDB2ParameterCollection> parameters)
+        public void ExecuteStoredProcedure(string sqlStatement, Action<iDB2ParameterCollection> parameters)
         {
-            using (iDB2Connection conn = new iDB2Connection(connString))
+            using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
             {
-                using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
+                cmd.CommandType = CommandType.StoredProcedure;
+                if (parameters != null) { parameters(cmd.Parameters); }
+                try
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
-                    if (parameters != null) { parameters(cmd.Parameters); }
-                    try {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (iDB2SQLErrorException e)
-                    {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (iDB2SQLErrorException e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
 
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
-                        throw e;
-                    }
-                    catch (Exception e)
-                    {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
 
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
-                        throw e;
-                    }
-                    finally
-                    {
-                        conn.Close();
-                    }
-                    conn.Close();
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
                 }
             }
         }
@@ -178,10 +238,69 @@ namespace IbmI.Net
         /// </summary>
         /// <param name="connString">The connection string</param>
         /// <param name="sqlStatement">The SQL statement</param>
-        public static void ExecuteStoredProcedure(string connString, string sqlStatement)
+        public void ExecuteStoredProcedure(string sqlStatement)
         {
-            ExecuteStoredProcedure(connString, sqlStatement, null);
+            ExecuteStoredProcedure(sqlStatement, null);
+        }
+
+        /// <summary>
+        ///  Executes a stored procedure that returns a result set.
+        /// </summary>
+        /// <param name="connString">The conn string.</param>
+        /// <param name="sqlStatement">The SQL statement.</param>
+        /// <param name="parameters">The parameters.</param>
+        public DataTable ExecuteStoredProcedureWithResultSet(string sqlStatement, Action<iDB2ParameterCollection> parameters)
+        {
+            DataTable dt = new DataTable();
+
+            using (iDB2Command cmd = new iDB2Command(sqlStatement, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                if (parameters != null) { parameters(cmd.Parameters); }
+                try
+                {
+                    using (iDB2DataAdapter da = new iDB2DataAdapter(cmd)) { da.Fill(dt); }
+                }
+                catch (iDB2SQLErrorException e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
+
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    if (!EventLog.SourceExists(_LOG_SOURCE))
+                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
+
+                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
+                    throw e;
+                }
+            }
+
+            return dt;
+        }
+
+        /// <summary>
+        /// Executes a stored procedure that returns a result set.
+        /// </summary>
+        /// <param name="connString">The conn string.</param>
+        /// <param name="sqlStatement">The SQL statement.</param>
+        /// <returns></returns>
+        public DataTable ExecuteStoredProcedureWithResultSet(string sqlStatement)
+        {
+            return ExecuteStoredProcedureWithResultSet(sqlStatement, null);
         }
         #endregion
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            conn.Close();
+            conn.Dispose();
+        }
     }
 }
