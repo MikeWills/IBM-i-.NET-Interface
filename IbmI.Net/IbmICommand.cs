@@ -7,9 +7,6 @@ namespace IbmI.Net
 {
     public static class IbmICommand
     {
-        private const string LOG_SOURCE = "IbmICommand";
-        private const string LOG_APPLICATION = "Application";
-
         /// <summary>
         /// Runs a command on the IBM i.
         /// </summary>
@@ -23,13 +20,6 @@ namespace IbmI.Net
             // Construct a string which contains the call to QCMDEXC.
             string pgmParm = String.Format("CALL QSYS.QCMDEXC('{0}', {1})", cmdText.Replace("'", "''").Trim(), cmdText.Trim().Length.ToString("0000000000.00000"));
 
-#if DEBUG
-            if (!EventLog.SourceExists(LOG_SOURCE))
-                EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
-
-            EventLog.WriteEntry(LOG_SOURCE, "Called statement: " + pgmParm, EventLogEntryType.Information);
-#endif
-
             using (cn)
             {
                 using (iDB2Command cmd = new iDB2Command(pgmParm, cn))
@@ -40,10 +30,6 @@ namespace IbmI.Net
                     }
                     catch (Exception e)
                     {
-                        if (!EventLog.SourceExists(LOG_SOURCE))
-                            EventLog.CreateEventSource(LOG_SOURCE, LOG_APPLICATION);
-
-                        EventLog.WriteEntry(LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
                         rc = false;
                     }
                 }

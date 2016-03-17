@@ -10,8 +10,6 @@ namespace IbmI.Net
 {
     public class IbmISql : IDisposable
     {
-        private const string _LOG_SOURCE = "IbmISql";
-        private const string _LOG_APPLICATION = "Application";
         private string _CONN_STRING;
         private iDB2Connection conn;
 
@@ -68,18 +66,10 @@ namespace IbmI.Net
                 }
                 catch (iDB2SQLErrorException e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
             }
@@ -120,18 +110,10 @@ namespace IbmI.Net
                 }
                 catch (iDB2SQLErrorException e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
             }
@@ -169,18 +151,10 @@ namespace IbmI.Net
                 }
                 catch (iDB2SQLErrorException e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
             }
@@ -216,18 +190,10 @@ namespace IbmI.Net
                 }
                 catch (iDB2SQLErrorException e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
             }
@@ -263,18 +229,10 @@ namespace IbmI.Net
                 }
                 catch (iDB2SQLErrorException e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on cmd.ExecuteNonQuery(): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    if (!EventLog.SourceExists(_LOG_SOURCE))
-                        EventLog.CreateEventSource(_LOG_SOURCE, _LOG_APPLICATION);
-
-                    EventLog.WriteEntry(_LOG_SOURCE, "**ERROR** on da.Fill(dt): " + e.Message, EventLogEntryType.Error);
                     throw e;
                 }
             }
